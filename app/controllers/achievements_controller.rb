@@ -26,8 +26,15 @@ class AchievementsController < ApplicationController
   def create
     @achievement = Achievement.new(achievement_params)
 
+
     respond_to do |format|
       if @achievement.save
+        # cleanup, enqueue? (create a client somewhere else, and enqueue events)#
+        client = Faye::Client.new('http://localhost:9292/faye')
+        push = @achievement.attributes.merge(@achievement.point.attributes).to_json
+        client.publish('/messages/achievement', push)
+
+
         format.html { redirect_to @achievement, notice: 'achievement was successfully created.' }
         format.json { render action: 'show', status: :created, location: @achievement }
       else
@@ -69,11 +76,10 @@ class AchievementsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def achievement_params
-      params.require(:achievement).permit(:description, :title,
-                                          point_attributes: point_params)
+      params.require(:achievement).permit(:description, :title).merge(point_params)
     end
 
     def point_params
-      params.permit(:value, :achievement_id, :value, :id, '_destroy')
+      params[:achievement].permit(point_attributes: [:value, :achievement_id, :value, :id, '_destroy'])
     end
 end

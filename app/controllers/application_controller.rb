@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   before_filter :total
 
   def total
+    #TODO cache this.
     @total = Point.pluck(:value).reduce(:+)
   end
 end

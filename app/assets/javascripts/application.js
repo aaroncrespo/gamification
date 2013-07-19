@@ -15,3 +15,16 @@
 //= require turbolinks
 //= require bootstrap
 //= require_tree .
+
+
+$(function() {
+  var client = new Faye.Client('http://localhost:9292/faye');
+    client.subscribe('/messages/achievement', function(data){
+        var ticker = $('#ticker');
+        var feed = $('ul#feed');
+        var achievement = JSON.parse(data);
+
+        ticker.text(parseInt(ticker.text(), 10) - achievement.value);
+        feed.prepend("<li>" + achievement.title + ': ' + achievement.description + "</li>");
+    });
+});

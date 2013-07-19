@@ -1,0 +1,17 @@
+<%= form_for @achievement do |f| %>
+  <%#= f.error_notification %>
+
+  <div class="form-inputs">
+    <%= f.text_field :title, placeholder: "Achievement" %>
+    <%= f.text_field :description, placeholder: "Description" %>
+
+    <%= f.fields_for :point do |p| %>
+      <%= p.number_field :value, placeholder: "Value" %>
+    <% end %>
+
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>
